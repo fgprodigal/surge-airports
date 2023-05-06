@@ -17,6 +17,7 @@
  * airport1 = script-path=https://raw.githubusercontent.com/janlay/surge-airports/master/airport-bar.js, type=generic, argument=https://example.com/subscribe/path
  * foo = script-path=https://raw.githubusercontent.com/janlay/surge-airports/master/airport-bar.js, type=generic, argument=https://example.com/subscribe/path;0
  * bar = script-path=https://raw.githubusercontent.com/janlay/surge-airports/master/airport-bar.js, type=generic, argument=https://example.com/subscribe/token?header=true;-1
+ * airport-method-get = script-path=https://raw.githubusercontent.com/janlay/surge-airports/master/airport-bar.js, type=generic, argument=https://example.com/subscribe/token?header=true;;;get
  * ---- config ends ----
  * 
  * `argument` in Section `Script`:
@@ -52,13 +53,13 @@ let planPeriod, planInterval;
 
     !!global.$argument || raiseError('Error: Argument for subscription URL is not provided.');
     let url;
-    [url, planInterval, planPeriod] = $argument.split(';');
+    [url, planInterval, planPeriod, method] = $argument.split(';');
     if (!url) raiseError('Error: Argument should start with a URL.');
     planPeriod = planPeriod || DEFAULT_PLAN_PERIOD;
     planInterval = parseInt(planInterval || DEFAULT_PLAN_INTERVAL);
 
     const headers = { 'User-Agent': 'Clash/1.8' };
-    $httpClient.head({ url, headers }, (error, response) => {
+    $httpClient[method || "head"]({ url, headers }, (error, response) => {
         try {
             // revealObject(this);
             if (error) throw error;
